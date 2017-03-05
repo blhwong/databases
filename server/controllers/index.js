@@ -32,7 +32,7 @@ module.exports = {
       //   res.writeHead(201, headers);
       //   res.end();
       // });
-      models.messages.post(req.body);
+      models.messages.post(req.body, req, res);
       // models.messages.post()
     } // a function which handles posting a message to the database
   },
@@ -48,7 +48,7 @@ module.exports = {
       // console.log('DATA---', req.data);
       req.on('data', function(chunk) {
         console.log(chunk.toString());
-        models.users.post(chunk.toString());
+        models.users.post(chunk.toString(), req, res);
       });
       // res.writeHead(201, headers);
       // res.end('test');

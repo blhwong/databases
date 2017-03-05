@@ -1,3 +1,12 @@
+
+var headers = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'access-control-allow-headers': 'content-type, accept',
+  'access-control-max-age': 10, // Seconds.
+  'Content-Type': 'application/json'
+};
+
 var mysql = require('mysql');
 
 var dbConnection = mysql.createConnection({
@@ -26,7 +35,7 @@ module.exports = {
       console.log(data);
       var selectQuery = "SELECT username_id FROM USERNAME WHERE username = '" + data.username + "';";
       console.log(selectQuery);
-      dbConnection.query(selectQuery, 
+      dbConnection.query(selectQuery,
         function(err, id) {
           if(err) {
             throw err;
@@ -34,8 +43,8 @@ module.exports = {
           console.log('RESULT IS', id);
           var query = "INSERT INTO MESSAGES (username_id, room, text) VALUES (" + id[0].username_id +  ", '" + data.roomname + "', " + "'" + data.text + "');";
           console.log(query);
-          dbConnection.query(query);  
-          
+          dbConnection.query(query);
+
         });
       // end connection to db
       // dbConnection.end();
@@ -45,19 +54,24 @@ module.exports = {
   users: {
     // get
     // post
-    post: function (chunk) {
+    post: function (chunk, req, res) {
       // connect to db
       // dbConnection.connect();
       // query username into username table
       var condQuery = "SELECT username_id from USERNAME WHERE username = '" + chunk + "';";
       dbConnection.query(condQuery, function(err, response) {
-        console.log('RESPONSE OF CONDITION', !response);
-        if (!response[0]) {
-          console.log(chunk);
-          var query = "INSERT INTO USERNAME (username) VALUES ('" + chunk + "')";
-          console.log(query);
-          dbConnection.query(query);  
-          
+        if (err) {
+          throw err;
+        } else {
+          // console.log('RESPONSE OF CONDITION', !response);
+          if (!response[0]) {
+            // console.log(chunk);
+            var query = "INSERT INTO USERNAME (username) VALUES ('" + chunk + "')";
+            // console.log(query);
+            dbConnection.query(query);
+          }
+          res.writeHead(201, headers);
+          res.end();
         }
 
       });
